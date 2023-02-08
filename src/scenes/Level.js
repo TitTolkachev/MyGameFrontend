@@ -12,6 +12,9 @@ class Level extends Phaser.Scene {
 		// Player
 		this.player = this.add.image(400, 400, "dino");
 		this.physics.add.existing(this.player);
+		this.players = [];
+		// authority: null - показывает, что это персонаж клиента
+		this.players.push({ image: this.player, authority: null, targetX: null, targetY: null });
 
 		// player (components)
 		//new PushOnClick(this.player);
@@ -22,25 +25,13 @@ class Level extends Phaser.Scene {
 	create() {
 		this.editorCreate();
 
-		this.players = [];
-		this.players.push({ image: this.player, authority: null, targetX: null, targetY: null });
-
-
-		// Hub Connection
 		this.hubConnection = new signalR.HubConnectionBuilder()
 			.withUrl("http://localhost:7070/game")
 			.build();
 
-		// получение данных с сервера
 		this.hubConnection.on("Receive", updatePlayerModel.bind(this));
-
 		function updatePlayerModel(model) {
 			let p = this.players.find(item => item.authority == model.authority);
-			// p.image.body.velocity.x = 0;
-			// p.image.body.velocity.y = 0;
-			// p.image.x = p.targetX;
-			// p.image.y = p.targetY;
-
 
 			// this.tweens.add({
 			// 	targets: this.players.find(item => item.authority == model.authority).image,
@@ -48,7 +39,6 @@ class Level extends Phaser.Scene {
 			// 	y: model.y,
 			// 	duration: 25
 			//   });
-
 
 			p.targetX = model.x;
 			p.targetY = model.y;
@@ -61,12 +51,22 @@ class Level extends Phaser.Scene {
 		}
 
 		this.hubConnection.on("AddPlayers", addNewPlayers.bind(this));
-
 		function addNewPlayers(newPlayers) {
 			newPlayers.forEach(element => {
 				let p = this.add.sprite(element.x, element.y, "dino");
 				this.players.push({ image: p, authority: element.authority, targetX: null, targetY: null });
 				this.physics.add.existing(p);
+			});
+		}
+
+		this.hubConnection.on("RefreshPlayersList", refreshPlayersList.bind(this));
+		function refreshPlayersList(playersList) {
+			this.hubConnection.invoke("RefreshPlayer", { x: this.player.x, y: this.player.y });
+			this.players.forEach(p => {
+				if (p.authority != null && !playersList.find(plr => plr.authority == p.authority)) {
+					p.image.destroy();
+					this.players.splice(this.players.indexOf(p), 1);
+				}
 			});
 		}
 
@@ -77,7 +77,7 @@ class Level extends Phaser.Scene {
 			});
 
 		setTimeout(() => {
-			this.hubConnection.invoke("RegisterPlayer", { "ConnectionId": "", "PlayerIndex": 0 });
+			this.hubConnection.invoke("RegisterPlayer", { x: this.player.x, y: this.player.y });
 		}, 1000);
 
 		this.cursors = this.input.keyboard.createCursorKeys();
@@ -113,10 +113,11 @@ class Level extends Phaser.Scene {
 				x -= 56;
 				//this.hubConnection.invoke("MovePlayer", this.player.x - 24, this.player.y);
 			}
-			if(x != 0 || y != 0)
-			this.hubConnection.invoke("MovePlayer", this.player.x + x, this.player.y + y);
+			if (x != 0 || y != 0)
+				this.hubConnection.invoke("MovePlayer", this.player.x + x, this.player.y + y);
 		}
 
+		// Фикс бага движка, когда персонаж не останавливается, достигнув цели
 		this.players.forEach(p => {
 			if (p.targetX || p.targetY) {
 				if (p.image.body.velocity.x > 0 && p.image.x > p.targetX ||
@@ -133,10 +134,4 @@ class Level extends Phaser.Scene {
 			}
 		});
 	}
-
-	/* END-USER-CODE */
 }
-
-/* END OF COMPILED CODE */
-
-// You can write more code here
