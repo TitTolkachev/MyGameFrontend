@@ -1,16 +1,9 @@
 
-// You can write more code here
-
-/* START OF COMPILED CODE */
-
 class Level extends Phaser.Scene {
 
 	constructor() {
 		super("Level");
 
-		/* START-USER-CTR-CODE */
-		// Write your code here.
-		/* END-USER-CTR-CODE */
 	}
 
 	/** @returns {void} */
@@ -26,15 +19,11 @@ class Level extends Phaser.Scene {
 		this.events.emit("scene-awake");
 	}
 
-	/* START-USER-CODE */
-
-	// Write more your code here
-
 	create() {
 		this.editorCreate();
 
-
 		this.players = [];
+		this.players.push({ image: this.player, authority: null, targetX: null, targetY: null });
 
 
 		// Hub Connection
@@ -47,10 +36,19 @@ class Level extends Phaser.Scene {
 
 		function updatePlayerModel(model) {
 			let p = this.players.find(item => item.authority == model.authority);
-			//p.image.body.velocity.x = 0;
-			//p.image.body.velocity.y = 0;
-			//p.image.x = p.targetX;
-			//p.image.y = p.targetY;
+			// p.image.body.velocity.x = 0;
+			// p.image.body.velocity.y = 0;
+			// p.image.x = p.targetX;
+			// p.image.y = p.targetY;
+
+
+			// this.tweens.add({
+			// 	targets: this.players.find(item => item.authority == model.authority).image,
+			// 	x: model.x,
+			// 	y: model.y,
+			// 	duration: 25
+			//   });
+
 
 			p.targetX = model.x;
 			p.targetY = model.y;
@@ -58,8 +56,7 @@ class Level extends Phaser.Scene {
 				p.image,
 				model.x,
 				model.y,
-				800, // speed
-				80// maxTimeToFinish(ms) - скорость изменения вектора скорости
+				400
 			);
 		}
 
@@ -84,9 +81,41 @@ class Level extends Phaser.Scene {
 		}, 1000);
 
 		this.cursors = this.input.keyboard.createCursorKeys();
+		this.frameTime = 0;
 	}
 
-	update() {
+	update(time, delta) {
+
+		this.frameTime += delta
+
+		if (this.frameTime > 50) {
+			this.frameTime = 0;
+
+			let x = 0, y = 0;
+
+			if (this.cursors.down.isDown) {
+				//this.player.y += 12;
+				y += 56;
+				//this.hubConnection.invoke("MovePlayer", this.player.x, this.player.y + 24);
+			}
+			if (this.cursors.right.isDown) {
+				//this.player.x += 12;
+				x += 56;
+				//this.hubConnection.invoke("MovePlayer", this.player.x + 24, this.player.y);
+			}
+			if (this.cursors.up.isDown) {
+				//this.player.y -= 12;
+				y -= 56;
+				//this.hubConnection.invoke("MovePlayer", this.player.x, this.player.y - 24);
+			}
+			if (this.cursors.left.isDown) {
+				//this.player.x -= 12;
+				x -= 56;
+				//this.hubConnection.invoke("MovePlayer", this.player.x - 24, this.player.y);
+			}
+			if(x != 0 || y != 0)
+			this.hubConnection.invoke("MovePlayer", this.player.x + x, this.player.y + y);
+		}
 
 		this.players.forEach(p => {
 			if (p.targetX || p.targetY) {
@@ -103,25 +132,6 @@ class Level extends Phaser.Scene {
 				}
 			}
 		});
-
-		if (this.cursors.down.isDown) {
-			this.player.y += 5;
-			this.hubConnection.invoke("MovePlayer", this.player.x, this.player.y);
-		}
-		if (this.cursors.right.isDown) {
-
-			this.player.x += 5;
-			this.hubConnection.invoke("MovePlayer", this.player.x, this.player.y);
-		}
-		if (this.cursors.up.isDown) {
-
-			this.player.y -= 5;
-			this.hubConnection.invoke("MovePlayer", this.player.x, this.player.y);
-		}
-		if (this.cursors.left.isDown) {
-			this.player.x -= 5;
-			this.hubConnection.invoke("MovePlayer", this.player.x, this.player.y);
-		}
 	}
 
 	/* END-USER-CODE */
