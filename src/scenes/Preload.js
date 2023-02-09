@@ -37,6 +37,10 @@ class Preload extends Phaser.Scene {
 		new PreloadText(progress);
 
 		this.events.emit("scene-awake");
+
+		// Create all sprite animations
+		this.createAllAnims();
+
 	}
 
 	/* START-USER-CODE */
@@ -52,6 +56,18 @@ class Preload extends Phaser.Scene {
 		this.load.on(Phaser.Loader.Events.COMPLETE, () => this.scene.start("Level"));
 	}
 
+	createAllAnims() {
+
+		// Hero walking
+		// this.anims.create(
+		// 	{
+		// 		key: 'spr-hero-walk',
+		// 		frames: this.anims.generateFrameNames('spr-hero', { frames: [] }),
+		// 		repeat: -1, // Infinitly
+		// 		frameRate: 12
+		// 	}
+		// );
+	}
 	/* END-USER-CODE */
 }
 

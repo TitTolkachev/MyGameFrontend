@@ -4,18 +4,30 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
-	
+
 	<title>My Game</title>
 
+	<!-- Libraries -->
 	<script src="lib/phaser.min.js"></script>
-	<script src="src/components/UserComponent.js"></script>
+	<script src="lib/signalr.js"></script>
+
+	<!-- Prefabs -->
+	<script src="src/prefabs/Entity.js"></script>
+	<script src="src/prefabs/Player.js"></script>
+
+	<!--
 	<script src="src/components/PushOnClick.js"></script>
+	-->
+	<script src="src/components/UserComponent.js"></script>
 	<script src="src/components/PreloadText.js"></script>
+
+	<!-- Scenes -->
 	<script src="src/scenes/Preload.js"></script>
 	<script src="src/scenes/Level.js"></script>
-	<script src="src/main.js"></script>
 
-	<script src="lib/signalr.js"></script>
+	<!-- Scripts -->
+	<script src="src/main.js"></script>
+	<script src="src/scripts/signalr.js"></script>
 
 	<style>
 		body {
