@@ -9,8 +9,14 @@ class Level extends Phaser.Scene {
 	/** @returns {void} */
 	editorCreate() {
 
+		// Constatns
+		this.SPRITE_WIDTH = 100;
+		this.MOTION_VECTOR_SPREAD = 30;
+
 		// Player
-		this.player = this.add.image(400, 400, "dino");
+		this.player = this.add.image(400, 400, "mario");
+		this.player.displayWidth = this.SPRITE_WIDTH;
+		this.player.scaleY = this.player.scaleX;
 		this.physics.add.existing(this.player);
 		this.players = [];
 		// authority: null - показывает, что это персонаж клиента
@@ -40,6 +46,11 @@ class Level extends Phaser.Scene {
 			// 	duration: 25
 			//   });
 
+			if (p.image.x > model.x + this.MOTION_VECTOR_SPREAD)
+				p.image.flipX = true;
+			else if (p.image.x + this.MOTION_VECTOR_SPREAD < model.x)
+				p.image.flipX = false;
+
 			p.targetX = model.x;
 			p.targetY = model.y;
 			this.physics.moveTo(
@@ -53,7 +64,9 @@ class Level extends Phaser.Scene {
 		this.hubConnection.on("AddPlayers", addNewPlayers.bind(this));
 		function addNewPlayers(newPlayers) {
 			newPlayers.forEach(element => {
-				let p = this.add.sprite(element.x, element.y, "dino");
+				let p = this.add.sprite(element.x, element.y, "luigi");
+				p.displayWidth = this.SPRITE_WIDTH;
+				p.scaleY = p.scaleX;
 				this.players.push({ image: p, authority: element.authority, targetX: null, targetY: null });
 				this.physics.add.existing(p);
 			});
