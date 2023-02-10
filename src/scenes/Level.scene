@@ -8,21 +8,7 @@
         "borderWidth": 1024,
         "borderHeight": 768
     },
-    "displayList": [
-        {
-            "type": "Image",
-            "id": "7d5827fd-34f6-473f-90e0-b9424a51d5fa",
-            "label": "Player",
-            "components": [
-                "PushOnClick"
-            ],
-            "texture": {
-                "key": "dino"
-            },
-            "x": 400,
-            "y": 218
-        }
-    ],
+    "displayList": [],
     "plainObjects": [],
     "meta": {
         "app": "Phaser Editor 2D - Scene Editor",

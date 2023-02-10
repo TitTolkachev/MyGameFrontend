@@ -60,19 +60,14 @@ class Level extends Phaser.Scene {
 	}
 
 	createPlayer(x, y, width) {
-		this.player = new Player(this, false, width, 'mario');
-		this.player.createSprite(x, y);
+		this.player = new Player(this, false, x, y, width, this.DEPTH.player, 'mario');
 		//this.player.startNewAnim('walk');
-		this.player.setDepth(this.DEPTH.player);
 		this.players.push(this.player);
 	}
 
 	loadPlayer(id, x, y, width) {
-		let p = new Player(this, id, width, 'luigi');
-		p.createSprite(x, y);
+		let p = new Player(this, id, x, y, width, this.DEPTH.player, 'luigi');
 		//p.startNewAnim('walk');
-		p.setDepth(this.DEPTH.player);
-
 		this.players.push(p);
 	}
 }

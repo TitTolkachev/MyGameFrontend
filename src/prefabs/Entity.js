@@ -1,13 +1,17 @@
-class Entity {
-    constructor(ctx, id, width, key) {
-        this.ctx = ctx;
+class Entity extends Phaser.Physics.Arcade.Sprite {
+    constructor(scene, id, x, y, width, depth, key) {
+        super(scene, x, y, key);
 
         this.id = id;
-        this.width = width;
-        // this.height = 32;
-        this.depth = 1;
+        this.setDepth(depth);
+        this.displayWidth = width; // сработает ????
+        this.scaleY = this.scaleX; // сработает ????
+        this.setOrigin(0.5); // сработает ????
+        this.scene.add.existing(this);
+        this.scene.physics.add.existing(this);
+        // this.ctx.physics.add.collider(this, this.depth, () => console.log("Collision!!!"));
+        // this.spr.setOnCollide(()=>console.log("Collision!!!"));
 
-        this.key = key;
         this.frames = {
         };
 
@@ -38,28 +42,10 @@ class Entity {
         }
     }
 
-    destroy(parent) {
-        this.destroySprite()
-        parent.splice(parent.indexOf(this), 1);
-    }
-
-    destroySprite() {
-        if (this.spr) {
-            this.spr.destroy();
-        }
-        this.spr = false;
-    }
-
-    createSprite(x, y) {
-        if (this.spr)
-            this.spr.destroy();
-
-        this.spr = this.ctx.add.sprite(x, y, this.key);
-        this.spr.displayWidth = this.width;
-        this.spr.scaleY = this.spr.scaleX;
-        this.spr.setOrigin(0.5);
-        this.ctx.physics.add.existing(this.spr);
-    }
+    // destroy(parent) {
+    //     this.destroySprite()
+    //     parent.splice(parent.indexOf(this), 1);
+    // }
 
     updateSpriteDirection() {
         switch (this.direction.current) {
@@ -68,11 +54,11 @@ class Entity {
             case 'down':
                 break;
             case 'left':
-                p.image.flipX = true;
+                p.flipX = true;
                 break;
             // right
             default:
-                p.image.flipX = false;
+                p.flipX = false;
                 break;
         }
     }
@@ -116,24 +102,20 @@ class Entity {
 
     // Setters
     setSpritePos(x, y) {
-        this.spr.x = x;
-        this.spr.y = y;
-    }
-    setDepth(depth) {
-        this.depth = depth;
-        this.spr.setDepth(depth);
+        this.x = x;
+        this.y = y;
     }
 
     // Moving
     checkVelocity() {
-        if (this.spr && (this.targetX || this.targetY)) {
-            if (this.spr.body.velocity.x > 0 && this.spr.x > this.targetX ||
-                this.spr.body.velocity.x < 0 && this.spr.x < this.targetX ||
-                this.spr.body.velocity.y < 0 && this.spr.y < this.targetY ||
-                this.spr.body.velocity.y > 0 && this.spr.y > this.targetY) {
-                this.spr.body.velocity.x = 0;
-                this.spr.body.velocity.y = 0;
-                this.setSpritePos(this.targetX, this.targetY);
+        if (this.targetX || this.targetY) {
+            if (this.body.velocity.x > 0 && this.x > this.targetX ||
+                this.body.velocity.x < 0 && this.x < this.targetX ||
+                this.body.velocity.y < 0 && this.y < this.targetY ||
+                this.body.velocity.y > 0 && this.y > this.targetY) {
+                this.body.velocity.x = 0;
+                this.body.velocity.y = 0;
+                this.setPosition(this.targetX, this.targetY);
                 this.targetX = false;
                 this.targetY = false;
             }

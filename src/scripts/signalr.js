@@ -22,15 +22,15 @@ class SignalRConnection {
 
             let p = this.ctx.players.find(item => item.id == model.id);
 
-            if (p.spr.x > model.x + this.ctx.MOTION_VECTOR_SPREAD)
-                p.spr.flipX = true;
-            else if (p.spr.x + this.ctx.MOTION_VECTOR_SPREAD < model.x)
-                p.spr.flipX = false;
+            if (p.x > model.x + this.ctx.MOTION_VECTOR_SPREAD)
+                p.flipX = true;
+            else if (p.x + this.ctx.MOTION_VECTOR_SPREAD < model.x)
+                p.flipX = false;
 
             p.targetX = model.x;
             p.targetY = model.y;
             this.ctx.physics.moveTo(
-                p.spr,
+                p,
                 model.x,
                 model.y,
                 this.ctx.MOVE_TO_SPEED
@@ -51,7 +51,7 @@ class SignalRConnection {
         this.connection.on("RefreshPlayersList", refreshPlayersList.bind(this));
         function refreshPlayersList(playersList) {
             if (this.ctx.player.id)
-                this.connection.invoke("RefreshPlayer", { x: this.ctx.player.spr.x, y: this.ctx.player.spr.y, id: this.ctx.player.id });
+                this.connection.invoke("RefreshPlayer", { x: this.ctx.player.x, y: this.ctx.player.y, id: this.ctx.player.id });
             this.ctx.players.forEach(p => {
                 if (p.id != this.ctx.player.id && !playersList.find(plr => plr.id == p.id)) {
                     p.destroy(this.ctx.players);
@@ -71,13 +71,13 @@ class SignalRConnection {
         this.connection.on("PlayerId", initPlayerId.bind(this))
         function initPlayerId(id) {
             this.ctx.player.id = id;
-            this.connection.invoke("RegisterPlayer", { x: this.ctx.player.spr.x, y: this.ctx.player.spr.y, id: this.ctx.player.id });
+            this.connection.invoke("RegisterPlayer", { x: this.ctx.player.x, y: this.ctx.player.y, id: this.ctx.player.id });
         }
         this.connection.invoke("GeneratePlayerId");
     }
 
-    movePlayer(x, y) {
-        if (this.ctx.player.id)
-            this.connection.invoke("MovePlayer", { x: x, y: y, id: this.ctx.player.id });
+    movePlayer(x, y, id) {
+        if (id)
+            this.connection.invoke("MovePlayer", { x: x, y: y, id: id });
     }
 }
