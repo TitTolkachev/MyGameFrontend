@@ -15,6 +15,11 @@
                 "url": "assets/luigi.png",
                 "key": "luigi",
                 "type": "image"
+            },
+            {
+                "url": "assets/coin-projectile.png",
+                "key": "coin-projectile",
+                "type": "image"
             }
         ]
     }

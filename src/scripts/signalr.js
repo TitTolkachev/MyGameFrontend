@@ -10,6 +10,7 @@ class SignalRConnection {
     init() {
         this.initReceive();
         this.initAddPlayers();
+        this.initAddProjectiles();
         this.initRefreshPlayersList();
         this.start();
 
@@ -42,7 +43,16 @@ class SignalRConnection {
         this.connection.on("AddPlayers", addNewPlayers.bind(this));
         function addNewPlayers(newPlayers) {
             newPlayers.forEach(element => {
-                this.ctx.loadPlayer(element.id, element.x, element.y, this.ctx.SPRITE_WIDTH, "luigi");
+                this.ctx.loadPlayer(element.id, element.x, element.y, this.ctx.PLAYER_SPRITE_WIDTH);
+            });
+        }
+    }
+
+    initAddProjectiles() {
+        this.connection.on("AddProjectiles", addNewProjectiles.bind(this));
+        function addNewProjectiles(newProjectiles) {
+            newProjectiles.forEach(element => {
+                this.ctx.loadProjectile(element.id, element.ownerId, element.x, element.y, element.vx, element.vy);
             });
         }
     }
@@ -53,8 +63,14 @@ class SignalRConnection {
             if (this.ctx.player.id)
                 this.connection.invoke("RefreshPlayer", { x: this.ctx.player.x, y: this.ctx.player.y, id: this.ctx.player.id });
             this.ctx.players.forEach(p => {
-                if (p.id != this.ctx.player.id && !playersList.find(plr => plr.id == p.id)) {
-                    p.destroy(this.ctx.players);
+                if (p.id == this.ctx.player.id && !playersList.find(plr => plr.id == p.id)) {
+                    // --------------------------------------
+                    // Пересоздать персонажа !!!
+                    // --------------------------------------
+                }
+                else if (p.id != this.ctx.player.id && !playersList.find(plr => plr.id == p.id)) {
+                    this.ctx.players.splice(this.ctx.players.indexOf(p), 1);
+                    p.destroy();
                 }
             });
         }
@@ -79,5 +95,10 @@ class SignalRConnection {
     movePlayer(x, y, id) {
         if (id)
             this.connection.invoke("MovePlayer", { x: x, y: y, id: id });
+    }
+
+    addProjectile(id, ownerId, x, y, vx, vy) {
+        if (id && ownerId)
+            this.connection.invoke("AddProjectile", { id: id, ownerId: ownerId, x: x, y: y,  vx: vx, vy: vy });
     }
 }

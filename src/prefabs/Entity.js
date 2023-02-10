@@ -4,11 +4,12 @@ class Entity extends Phaser.Physics.Arcade.Sprite {
 
         this.id = id;
         this.setDepth(depth);
-        this.displayWidth = width; // сработает ????
-        this.scaleY = this.scaleX; // сработает ????
-        this.setOrigin(0.5); // сработает ????
+        this.displayWidth = width;
+        this.scaleY = this.scaleX;
+        this.setOrigin(0.5);
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);
+        
         // this.ctx.physics.add.collider(this, this.depth, () => console.log("Collision!!!"));
         // this.spr.setOnCollide(()=>console.log("Collision!!!"));
 
@@ -31,7 +32,7 @@ class Entity extends Phaser.Physics.Arcade.Sprite {
         }
 
         this.health = {
-            corrent: 1,
+            current: 1,
             total: 1
         }
 
@@ -101,10 +102,6 @@ class Entity extends Phaser.Physics.Arcade.Sprite {
     }
 
     // Setters
-    setSpritePos(x, y) {
-        this.x = x;
-        this.y = y;
-    }
 
     // Moving
     checkVelocity() {
