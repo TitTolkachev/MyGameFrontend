@@ -50,8 +50,6 @@ class Level extends Phaser.Scene {
 		if (this.frameTime > 50) {
 			this.frameTime = 0;
 
-			console.log(this.frameTime);
-
 			this.player.move();
 		}
 
